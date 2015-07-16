@@ -4,26 +4,35 @@ from django.db import models
 
 
 class Author(models.Model):
-	user = models.OneToOneField(User, verbose_name='Логин')
-	organization = models.CharField(u'Организация', max_length=100)
+    user = models.OneToOneField(User, verbose_name='Логин')
+    organization = models.CharField(u'Организация', max_length=100, blank=True)
 
-	def __unicode__(self):
-		return unicode(self.user)
+    def __unicode__(self):
+        return unicode(self.user)
 
-	class Meta:
-		verbose_name = 'Пользователь'
-		verbose_name_plural = 'Пользователи'
+    class Meta:
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
 
 
 class Post(models.Model):
-	title = models.CharField(u'Заголовок поста', max_length=300)
-	datetime = models.DateTimeField(u'Дата публикации')
-	author = models.ForeignKey(Author)
-	content = models.TextField()
+    title = models.CharField(u'Заголовок поста', max_length=300)
+    datetime = models.DateTimeField(u'Дата публикации', auto_now_add=True)
+    author = models.ForeignKey(Author)
+    content = models.TextField()
 
-	def __unicode__(self):
-		return self.title
+    def __unicode__(self):
+        return self.title
 
-	class Meta:
-		verbose_name = 'Пост'
-		verbose_name_plural = 'Посты'
+    def get_absolute_url(self):
+        return "/posts/%i/" % self.id
+
+    class Meta:
+        verbose_name = 'Пост'
+        verbose_name_plural = 'Посты'
+        ordering = ['-datetime']
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post)
+    content = models.TextField()
+    author = models.ForeignKey(Author)
