@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+  <div class="wrapper">
+      <div class="row row-top">
+          <div class="col-sm-6">
+              {% block post_header %}{% endblock %}
+          </div>
+          <div class="col-sm-6">
+              <div class="pull-right">
+                  {% if user.is_authenticated %}
+                      {% block user_label %}
+                        <span class="label label-default label-user">{{ user.username }}</span>
+                      {% endblock %}
+                      <a class="btn btn-default" href="{% url 'auth_logout' %}" role="button">Выйти</a>
+                  {% else %}
+                      <a class="btn btn-default" href="{% url 'auth_login' %}" role="button">Войти</a>
+                      <a class="btn btn-primary btn-reg" href="{% url 'registration_register' %}" role="button">Регистрация</a>
+                  {% endif %}
+              </div>
+          </div>
+      </div>
+      {% if user.is_authenticated %}
+      <div class="col-md-3 col-sm-3">
+          <ul class="nav nav-pills nav-stacked" data-spy="affix" data-offset-top="140">
+              <li><a href="{% url 'posts' %}"><i class="fa fa-list-alt"></i> Все обсуждения</a></li>
+              <li><a href="{% url 'post_new' %}"><i class="fa fa-pencil"></i> Новое обсуждение</a></li>
+              <li><a href="{% url 'my_posts' %}"><i class="fa fa-list-alt"></i> Мои обсуждения</a></li>
+              <li><a href="{% url 'my_comments' %}"><i class="fa fa-comments"></i> Мои комментарии</a></li>
+              <li><a href="#"><i class="fa fa-envelope"></i> Мои сообщения</a></li>
+              <li><a href="{% url 'profile' %}"><i class="fa fa-cog"></i> Профиль</a></li>
+          </ul>
+      </div>
+      {% else %}
+      <div class="col-md-3 col-sm-3">
+          <ul class="nav nav-pills nav-stacked" data-spy="affix" data-offset-top="140">
+              <li><a href="{% url 'posts' %}"><i class="fa fa-list-alt"></i> Все обсуждения</a></li>
+              <li><a href="#"><i class="fa fa-users"></i> Все пользователи</a></li>
+          </ul>
+      </div>
+      {% endif %}
+      <div class="col-md-9 col-sm-9 posts-main">
+          {% block post_content %}{% endblock %}
+       </div>
+  </div>
+
+{% endblock %}
+
+{% block contacts %}{% endblock %}

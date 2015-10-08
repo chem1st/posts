@@ -1,35 +1,90 @@
-{% extends 'base.html' %}
+{% extends 'posts/post_base.html' %}
 
-{% block title %} Посты {{ block.super }} {% endblock %}
 
-{% block content %}
-  
-  <div class="col-sm-10 col-sm-offset-1 blog-main">
-    {% for post in posts %}
-      <div class="panel panel-default">
+{% block title %}Обсуждения {{ block.super }}{% endblock %}
+
+{% block post_header %}<h1 class="no-border-header">Обсуждения</h1>{% endblock %}
+
+{% block post_content %}
+
+{% for post in posts %}
+    <div class="panel panel-default">
         <div class="panel-heading">
-          <h3 class="panel-title"><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+            <h3 class="panel-title">
+                <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+                {% if post.author == user %}
+                    <a href="{% url 'post_delete' post.slug %}" class="pull-right post-delete-icon" title="Удалить">
+                        <i class="fa fa-times"></i>
+                    </a>
+                    <a href="{% url 'post_update' post.slug %}" class="pull-right post-update-icon" title="Редактировать">
+                        <i class="fa fa-pencil"></i>
+                    </a>
+                {% endif %}
+            </h3>
         </div>
         <div class="panel-body">
-          <div class="blog-post">
-            <p class="blog-post-date"><i class="fa fa-clock-o"></i> {{ post.datetime }}</p>
-            <p class="blog-post-user"><i class="fa fa-user"></i> <a href="#">{{ post.author }}</a></p>
-            {{ post.content }}
-          </div>
+            <p class="post-date"><i class="fa fa-clock-o"></i> {{ post.created }}</p>
+            {{ post.abstract }}
         </div>
         <div class="panel-footer">
-            <i class="fa fa-comment"></i>
+            <div class="row">
+                <div class="col-sm-3">
+                    <p class="post-user">
+                        <a href="{% url 'user' post.author.id %}"><i class="fa fa-user"></i> {{ post.author }}</a>
+                    </p>
+                </div>
+                <div class="col-sm-2">
+                    <p class="post-comments">
+                        <a href="{{ post.get_absolute_url }}#comments"><i class="fa fa-comment"></i>
+                            {{ post.comment_set.all|length }}</a>
+                    </p>
+                </div>
+                {% if is_profile %}
+                    <div class="col-sm-3">
+                        {% if post.activity %}
+                            <p class="post-status">Активен</p>
+                        {% else %}
+                            <p class="post-status">На модерации</p>
+                        {% endif %}
+                    </div>
+                    <div class="col-sm-4">
+                {% else %}
+                    <div class="col-sm-7">
+                {% endif %}
+                    <p class="post-tags">
+                        {% if post.tags.all|length %}
+                            <i class="fa fa-tags"></i>
+                            {% for tag in post.tags.all %}
+                                {% if forloop.last %}
+                                    <a href="{% url 'tagged' tag.slug %}">{{ tag.name }}</a>
+                                {% else %}
+                                    <a href="{% url 'tagged' tag.slug %}">{{ tag.name }}</a>,
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
         </div>
-      </div>
-    {% endfor %}
-      
-    <nav>
-      <ul class="pager">
-        <li><a href="#">Предыдущая</a></li>
-        <li><a href="#">Следующая</a></li>
-      </ul>
-    </nav>
+    </div>
+{% empty %}
+    <p>Здесь еще нет постов.</p>
+{% endfor %}
 
-  </div>
+{% if is_paginated %}
+    <nav>
+         <ul class="pager">
+            {% if page_obj.has_previous %}
+                <li><a href="/posts?page={{ page_obj.previous_page_number }}">Назад</a></li>
+            {% endif %}
+            <span class="page-current">
+                Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}.
+            </span>
+            {% if page_obj.has_next %}
+                <li><a href="/posts?page={{ page_obj.next_page_number }}">Вперед</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}
 
 {% endblock %}

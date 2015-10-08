@@ -1,0 +1,23 @@
+{% extends 'posts/post_base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}Создание нового поста {{ block.super }}{% endblock %}
+{% block post_header %}<h1 class="no-border-header">Создание нового обсуждения</h1>{% endblock %}
+
+{% block post_content %}
+<p class="sm-link"><a href="{% url 'posts' %}"><i class="fa fa-angle-left"></i> Назад ко всем обсуждениям</a></p>
+<div class="panel panel-default">
+    <div class="panel-body">
+        <form method="post" action=".">
+            {% csrf_token %}
+            {{ form.media }}
+            {{ form|crispy }}
+            <button class="btn btn-primary" type="submit">Опубликовать</button>
+        </form>
+    </div>
+</div>
+
+<p class="sm-link"><a href="{% url 'posts' %}"><i class="fa fa-angle-left"></i> Назад ко всем обсуждениям</a></p>
+
+{% endblock %}

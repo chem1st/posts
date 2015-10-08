@@ -1,0 +1,24 @@
+{% extends 'posts/post_base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}{{ user.username }} - редактирование профиля {{ block.super }}{% endblock %}
+{% block post_header %}<h1 class="no-border-header">Профиль пользователя</h1>{% endblock %}
+
+{% block post_content %}
+
+<div class="col-md-8 col-md-offset-1">
+    <p class="sm-link"><a href="{% url 'profile' %}"><i class="fa fa-angle-left"></i> Отменить редактирование</a></p>
+    <form method="post" action=".">
+        {% for userform in userforms %}
+            {{ userform }}
+        {% endfor %}
+        {% for post_formset in post_formsets %}
+            {{ post_formset }}
+        {% endfor %}
+        <button class="btn btn-primary" type="submit">Сохранить</button>
+    </form>
+    <p class="sm-link"><a href="{% url 'profile' %}"><i class="fa fa-angle-left"></i> Отменить редактирование</a></p>
+</div>
+
+{% endblock %}
